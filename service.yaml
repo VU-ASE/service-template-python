@@ -1,19 +1,22 @@
-name: SERVICE_NAME
-author: SERVICE_AUTHOR
+name: python-controller
+author: max
 source: SERVICE_SOURCE
-version: SERVICE_VERSION
+version: 0.0.1
 description: A template service in Python
 
+as: controller
+
 commands:
-  build: make build
+  build: echo "no build command needed"
   run: ./src/main.py
   
 inputs:
-  - service: example-input
+  - service: imaging
     streams:
-      - rpm-data
+      - path
+
 outputs:
-  - example-output
+  - decision
 
 configuration:
   - name: number-example
