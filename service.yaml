@@ -1,0 +1,31 @@
+name: python-controller
+author: max
+source: SERVICE_SOURCE
+version: 0.0.1
+description: A template service in Python
+
+as: controller
+
+commands:
+  build: echo "no build command needed"
+  run: ./src/main.py
+  
+inputs:
+  - service: imaging
+    streams:
+      - path
+
+outputs:
+  - decision
+
+configuration:
+  - name: number-example
+    type: number
+    value: 30
+  - name: string-example
+    type: string
+    value: "hello all"
+  - name: tunable-string-example
+    type: string
+    value: "hello all, this is tunable"
+    tunable: true
