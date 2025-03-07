@@ -1,6 +1,5 @@
 #!/usr/bin/python3
 import roverlib
-from typing import Optional
 import signal
 from loguru import logger
 import roverlib.rovercom as rovercom
