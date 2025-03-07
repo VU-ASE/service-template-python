@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 import roverlib
 from typing import Optional
 import signal
@@ -6,7 +7,7 @@ import roverlib.rovercom as rovercom
 import time
 
 
-def run(service : roverlib.Service, configuration : roverlib.ServiceConfiguration) -> Optional[Exception]:
+def run(service : roverlib.Service, configuration : roverlib.ServiceConfiguration):
     if configuration is None:
         return ValueError("Configuration cannot be accessed")
     
@@ -82,7 +83,7 @@ def run(service : roverlib.Service, configuration : roverlib.ServiceConfiguratio
         # Don't waste CPU cycles
         time.sleep(1)
 
-def on_terminate(sig : signal) -> Optional[Exception]:
+def on_terminate(sig : signal):
     logger.info(f"signal: {str(sig)}, Terminating service")
 
     #
