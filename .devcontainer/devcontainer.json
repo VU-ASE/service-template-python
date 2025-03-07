@@ -1,21 +1,24 @@
 {
-    "name": "ASE-service",
-    "build": {
-      "dockerfile": "Dockerfile",
-      "context": "..",
-      "options": [
-        "--network=host"
-      ]
-    },
-    "customizations": {
-      "vscode": {
-        "extensions": [
-          "dbankier.vscode-quick-select", // Quick select with cmd/ctrl+k "
-          "charliermarsh.ruff"
-        ]
-      }
-    },
-    "runArgs": [
+  "name": "ASE-service",
+  "build": {
+    "dockerfile": "./Dockerfile",
+    "context": "..",
+    "options": [
       "--network=host"
     ]
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "tamasfe.even-better-toml", // TOML syntax support
+        "dbankier.vscode-quick-select", // Quick select with cmd/ctrl+k "
+        "charliermarsh.ruff"
+      ]
+    }
+  },
+  "runArgs": [
+    "--network=host"
+  ],
+  "remoteUser": "dev"
 }
+

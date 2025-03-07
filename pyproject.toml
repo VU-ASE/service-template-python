@@ -1,0 +1,15 @@
+[project]
+name = "service"
+version = "0.0.1"
+description = "A template service in Python"
+readme = "README.md"
+authors = []
+requires-python = ">=3.10"
+dependencies = ["roverlib"]
+
+# Tell pytest that all files in the /tests directory are tests
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "tests/*.py"
+python_functions = "test_*"
+python_classes = "Test*"
