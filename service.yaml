@@ -1,9 +1,14 @@
-name: python-controller
-author: max
-source: SERVICE_SOURCE
+name: example-python-controller
+author: change-me
+source: https://github.com/VU-ASE/service-template-python
 version: 0.0.1
 description: A template service in Python
 
+# While the name is "example-python-controller", the default actuator is setup 
+# to look for an output called decision from the "controller" service. Since it's
+# rather tedious to change the service.yaml of the actuator input from "controller"
+# to "example-python-controller" we can instead use the 'as: controller' which
+# lets us pretend to be a service with the name "controller".
 as: controller
 
 commands:
