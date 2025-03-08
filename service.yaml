@@ -1,7 +1,8 @@
-name: example-python-controller
-author: change-me
-source: https://github.com/VU-ASE/service-template-python
-version: 0.0.1
+# note: these values are automatically replaced when initialized with roverctl
+name: SERVICE_NAME
+author: SERVICE_AUTHOR
+source: SERVICE_SOURCE
+version: SERVICE_VERSION
 description: A template service in Python
 
 # While the name is "example-python-controller", the default actuator is setup 
