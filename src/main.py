@@ -62,8 +62,11 @@ def run(service : roverlib.Service, configuration : roverlib.ServiceConfiguratio
 
         logger.info(f"Imaging service captured a {imaging_data.trajectory.width} by {imaging_data.trajectory.height} image")
 
-        # Print the X and Y coordinates of the middle point of the track that Imaging has detected
-        logger.info(f"The X: {imaging_data.trajectory.points[0].x} and Y: {imaging_data.trajectory.points[0].y} values of the middle point of the track")
+        
+        # If the imaging has detected any track pieces, the print the X and Y coordinates of 
+        # the middle point of the track.
+        if len(imaging_data.trajectory.points) > 0:
+            logger.info(f"The X: {imaging_data.trajectory.points[0].x} and Y: {imaging_data.trajectory.points[0].y} values of the middle point of the track")
 
         # This value holds the steering position that we want to pass to the servo (-1 = left, 0 = center, 1 = right)
         steer_position = -0.5
