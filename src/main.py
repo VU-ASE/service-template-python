@@ -6,78 +6,100 @@ from loguru import logger
 import roverlib
 import roverlib.rovercom as rovercom
 
-# 
+# The main user space program
+# this program has all you need from roverlib: service identity, reading, writing and configuration
 def run(service : roverlib.Service, configuration : roverlib.ServiceConfiguration):
+    #
+    # Get configuration values
+    #
     if configuration is None:
-        return ValueError("Configuration cannot be accessed")
+        raise ValueError("Configuration cannot be accessed")
     
+    #
     # Access the to the identity of this service, who am I?
-    logger.info(f"Hello World, a new service {service.name} was born at version {service.version}")
+    #
+    logger.info(f"Hello World, a new Python service {service.name} was born at version {service.version}")
 
-    # Access the service configuration found in service.yaml, to use runtime parameters
-    example_num = configuration.GetFloatSafe("number-example")
-    example_string = configuration.GetStringSafe("string-example")
-    example_string_tunable = configuration.GetStringSafe("tunable-string-example")
-    logger.info(f"Fetched runtime configuration examples: ")
-    logger.info(f"number: {example_num}")
-    logger.info(f"string: {example_string}")
-    logger.info(f"tunable string: {example_string_tunable}")
+    #
+    # Access the service configuration, to use runtime parameters
+    #
+    tunable_speed = configuration.GetFloatSafe("speed")
+    if tunable_speed is None:
+        raise ValueError("Failed to get configuration")
+    logger.info(f"Fetched runtime configuration example tunable number: {tunable_speed}")
 
 
+    #
+    # Reading from an input, to get data from other services (see service.yaml to understand the input name)
+    #
+    read_stream : roverlib.ReadStream = service.GetReadStream("imaging", "path")
+    if read_stream is None:
+        raise ValueError("Failed to get read stream")
+    
+    #
+    # Writing to an output that other services can read (see service.yaml to understand the output name)
+    #
+    write_stream : roverlib.WriteStream = service.GetWriteStream("decision")
+    if write_stream is None:
+        raise ValueError("Failed to create write stream 'decision'")
 
-    # This service will be reading the "path" data from the imaging service
-    # and it will publish "decision" data to anyone who subscribes.
-    # We initialize the streams as follows:
-    image_stream : roverlib.ReadStream = service.GetReadStream("imaging", "path")
-    actuator_stream : roverlib.WriteStream = service.GetWriteStream("decision")
-
-    # Main processing loop
     while True:
-        # --------------------------------
-        # Reading data from other services
-        # --------------------------------
-        # Then read a message from imaging. Typically, the next line will be at the start of your loop
-        image_data = image_stream.Read()
-        if image_data.camera_output is None:
-            logger.error("image data was not camera output")
-            exit(1)
+        #
+        # Reading one message from the stream
+        #
+        data = read_stream.Read()
+        if data is None:
+            raise ValueError("Failed to read from 'imaging' service")
         
-        # For more information on what available messages are published, check the rovercom
-        # definition https://github.com/VU-ASE/roverlib-python/blob/main/src/roverlib/rovercom.py
-        width = image_data.camera_output.trajectory.width
-        height = image_data.camera_output.trajectory.height
-        logger.info(f"Received an image of {width} x {height} pixels")
+        # When did the imaging service create this message
+        created_at = data.timestamp
+        logger.info(f"Received message with timestamp: {created_at}")
 
-        for point in image_data.camera_output.trajectory.points:
-            logger.info(f"imaging produced a point: {point}")
+        # Get the imaging data
+        imaging_data = data.camera_output
+        if imaging_data is None:
+            return ValueError("Message does not contain camera output. What did imaging do??")
 
-        # -------------------------
-        # Writing to other services
-        # -------------------------
+        logger.info(f"Imaging service captured a {imaging_data.trajectory.width} by {imaging_data.trajectory.height} image")
 
-        time.sleep(1)
+        
+        # If the imaging has detected any track pieces, the print the X and Y coordinates of 
+        # the middle point of the track.
+        if len(imaging_data.trajectory.points) > 0:
+            logger.info(f"The X: {imaging_data.trajectory.points[0].x} and Y: {imaging_data.trajectory.points[0].y} values of the middle point of the track")
 
-        actuator_stream.Write(rovercom.SensorOutput(
-            sensor_id=2,
+        # This value holds the steering position that we want to pass to the servo (-1 = left, 0 = center, 1 = right)
+        steer_position = -0.5
+
+        write_stream.Write(rovercom.SensorOutput(
+            sensor_id=1,
             timestamp=int(time.time() * 1000),
             controller_output=rovercom.ControllerOutput(
-                steering_angle = -0.4,
-                left_throttle = 0.12,
-                right_throttle = 0.12,
+                steering_angle = steer_position,
+                left_throttle = tunable_speed,
+                right_throttle = tunable_speed,
             )
         ))
 
-        time.sleep(1)
+        #
+		# Now do something else fun, see if our "tunable_speed" is updated
+		#
+        logger.info("Checking for tunable number update")
 
-        actuator_stream.Write(rovercom.SensorOutput(
-            sensor_id=2,
-            timestamp=int(time.time() * 1000),
-            controller_output=rovercom.ControllerOutput(
-                steering_angle = 0.4,
-                left_throttle = 0.12,
-                right_throttle = 0.12,
-            )
-        ))
+        curr = tunable_speed
+
+        # We are not using the safe version here, because using locks is boring
+		# (this is perfectly fine if you are constantly polling the value)
+		# nb: this is not a blocking call, it will return the last known value
+        new_val = configuration.GetFloat("speed")
+        if new_val is None:
+            raise ValueError("Failed to get updated tunable number")
+        if new_val != curr:
+            logger.info(f"Tunable number updated: {curr} -> {new_val}")
+            curr = new_val
+        tunable_speed = curr
+
+        
 
 
 # This function gets called when the pipeline gets terminated. This can happen if any other service

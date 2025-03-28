@@ -5,11 +5,9 @@ source: SERVICE_SOURCE
 version: SERVICE_VERSION
 description: A template service in Python
 
-# While the name is "example-python-controller", the default actuator is setup 
-# to look for an output called decision from the "controller" service. Since it's
-# rather tedious to change the service.yaml of the actuator input from "controller"
-# to "example-python-controller" we can instead use the 'as: controller' which
-# lets us pretend to be a service with the name "controller".
+# The alias "as: controller" allows this service to be recognized as "controller"
+# by other components (like the actuator), even if its actual name is different.
+# This allows us to change the name of the service without breaking the system.
 as: controller
 
 commands:
@@ -20,18 +18,11 @@ inputs:
   - service: imaging
     streams:
       - path
-
 outputs:
   - decision
 
 configuration:
-  - name: number-example
+  - name: speed
     type: number
-    value: 30
-  - name: string-example
-    type: string
-    value: "hello all"
-  - name: tunable-string-example
-    type: string
-    value: "hello all, this is tunable"
+    value: 0.2
     tunable: true
