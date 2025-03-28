@@ -1,22 +1,24 @@
-# service-template-python
-This template serves as a starting point for writing a service in python. It uses [roverlib](https://pypi.org/project/roverlib/) to make setting up communication with other services easier.
+<h1 align="center">service template for <code>python</code></h1>
+<div align="center">
+  <a href="https://github.com/VU-ASE/service-template-python/releases/latest">Latest release</a>
+  <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
+  <a href="https://ase.vu.nl/docs/framework/glossary/service">About a service</a>
+  <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
+  <a href="https://ase.vu.nl/docs/framework/glossary/roverlib">About the roverlib</a>
+  <br />
+</div>
+<br/>
 
-This example service acts like a "controller" so it takes as input data from [imaging](https://github.com/VU-ASE/imaging) and outputs data for the [actuator](https://github.com/VU-ASE/actuator). For simplicity, it does nothing with the image data, but simply starts driving in a snake pattern. For details, take a look at [`src/main.py`](./src/main.py).
+**When building a service that runs on the Rover and should interface the ASE framework, you will most likely want to use a [roverlib](https://ase.vu.nl/docs/framework/glossary/roverlib). This is a Python template that incorporates [`roverlib-python`](https://github.com/VU-ASE/roverlib-go), meant to run on the Rover.**
 
-## Uploading
+## Initialize a Python service
 
-After changing the name, author and version in the [service.yaml](./service.yaml) you can use the following command to upload the service to the rover (in this case to Rover 5):
+Instead of cloning this repository, it is recommended to initialize this Python service using `roverctl` as follows:
 
-``` bash
-roverctl -r 5 upload .
+```bash
+roverctl service init python --name python-example --source github.com/author/python-example
 ```
 
-For more fast-paced development you can add `-w` which will watch for changes and automatically upload them.
+Read more about using `roverctl` to initialize services [here](https://ase.vu.nl/docs/framework/Software/rover/roverctl/usage#initialize-a-service).
 
-``` bash
-roverctl -r 5 upload . -w
-```
-
-## Running a Pipeline
-To run this in a pipeline, open the web interface with `roverctl -r 5` and make sure you enable the dependencies that this service requires, namely `vu-ase/imaging` and `vu-ase/actuator`.
 
