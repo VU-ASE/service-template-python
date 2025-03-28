@@ -9,7 +9,7 @@
 </div>
 <br/>
 
-**When building a service that runs on the Rover and should interface the ASE framework, you will most likely want to use a [roverlib](https://ase.vu.nl/docs/framework/glossary/roverlib). This is a Python template that incorporates [`roverlib-python`](https://github.com/VU-ASE/roverlib-go), meant to run on the Rover.**
+**When building a service that runs on the Rover and should interface the ASE framework, you will most likely want to use a [roverlib](https://ase.vu.nl/docs/framework/glossary/roverlib). This is a Python template that incorporates [`roverlib-python`](https://github.com/VU-ASE/roverlib-python), meant to run on the Rover.**
 
 ## Initialize a Python service
 
